@@ -1,0 +1,59 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  # Pin to Dp integration tip (T1+T2+T3): implement/dp-platform-ship @ d601a74
+  WORLDSMITHS_ENGINE_REF: d601a740df3bf78a7bf6209cc7c884244e519fc9
+  WORLDSMITHS_ENGINE_ROOT: ${{ github.workspace }}/engine
+
+jobs:
+  ship:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout example game
+        uses: actions/checkout@v7
+        with:
+          path: game
+
+      - name: Checkout Worldsmiths engine (pinned SHA)
+        uses: actions/checkout@v7
+        with:
+          repository: Worldsmiths/worldsmiths
+          ref: ${{ env.WORLDSMITHS_ENGINE_REF }}
+          path: engine
+
+      - uses: actions/setup-java@v6
+        with:
+          distribution: temurin
+          java-version: "21"
+
+      - uses: gradle/actions/setup-gradle@v6
+
+      - name: Bar C gate (no direct gdx / no com.badlogic.gdx imports)
+        working-directory: game
+        run: bash ci/assert-bar-c.sh
+
+      - name: Build ship archives (includeBuild engine)
+        working-directory: game
+        run: ./gradlew :desktop:distZip :web:wsItchWebZip --no-daemon
+
+      - name: Assert ship marker in both archives
+        working-directory: game
+        run: bash ci/assert-ship-marker.sh
+
+      - uses: actions/upload-artifact@v7
+        with:
+          name: example-basic-ship-archives
+          path: |
+            game/.worldsmiths/gen/desktop/build/distributions/*.zip
+            game/.worldsmiths/gen/web/build/distributions/web-itch.zip

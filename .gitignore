@@ -1,0 +1,6 @@
+.gradle/
+build/
+.worldsmiths/
+.idea/
+*.iml
+out/
