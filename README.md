@@ -24,7 +24,7 @@ CI enforces this with `ci/assert-bar-c.sh`.
 | Override | `WORLDSMITHS_ENGINE_ROOT` or `-Dworldsmiths.engineRoot=...` |
 | CI | Dual-checkout at `engine/` + `game/`; pin SHA in `.github/workflows/ci.yml` |
 
-Substitution snippet matches engine [`docs/includebuild-substitutions.md`](https://github.com/Worldsmiths/worldsmiths/blob/d601a740df3bf78a7bf6209cc7c884244e519fc9/docs/includebuild-substitutions.md).
+Uses bare `includeBuild` against the engine checkout (no `dependencySubstitution`). See engine [`docs/includebuild-substitutions.md`](https://github.com/Worldsmiths/worldsmiths/blob/implement/da-architecture-seams/docs/includebuild-substitutions.md).
 
 ## Build ship archives
 

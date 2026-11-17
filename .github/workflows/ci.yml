@@ -12,8 +12,8 @@ concurrency:
   cancel-in-progress: true
 
 env:
-  # Pin to Dp integration tip (T1+T2+T3): implement/dp-platform-ship @ d601a74
-  WORLDSMITHS_ENGINE_REF: d601a740df3bf78a7bf6209cc7c884244e519fc9
+  # Pin to Da tip (T5 bare includeBuild): implement/da-architecture-seams @ 18f951b
+  WORLDSMITHS_ENGINE_REF: 18f951bff7f72f7f62cf62674da9614fd13f1948
   WORLDSMITHS_ENGINE_ROOT: ${{ github.workspace }}/engine
 
 jobs:

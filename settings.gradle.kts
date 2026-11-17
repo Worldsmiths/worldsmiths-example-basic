@@ -9,6 +9,12 @@ pluginManagement {
             )
             .firstOrNull { !it.isNullOrBlank() }
             ?: "../worldsmiths"
+    // AGP lives on the engine plugin classpath (TeaVM-style); Plugin Portal alone cannot resolve it.
+    repositories {
+        google()
+        mavenCentral()
+        gradlePluginPortal()
+    }
     includeBuild("$engineRoot/gradle-plugin")
 }
 
@@ -18,6 +24,7 @@ plugins {
 
 dependencyResolutionManagement {
     repositories {
+        google()
         mavenCentral()
     }
 }
@@ -30,17 +37,9 @@ val engineRoot =
         .firstOrNull { !it.isNullOrBlank() }
         ?: "../worldsmiths"
 
-// Documented consumer snippet: docs/includebuild-substitutions.md in the engine repo.
-includeBuild(engineRoot) {
-    dependencySubstitution {
-        substitute(module("io.github.worldsmiths:backends-desktop"))
-            .using(project(":backends:desktop"))
-        substitute(module("io.github.worldsmiths:backends-web"))
-            .using(project(":backends:web"))
-        substitute(module("io.github.worldsmiths:ws-core"))
-            .using(project(":runtime:ws-core"))
-    }
-}
+// Resolve published-looking coordinates from the engine checkout via bare includeBuild (ADR-0003).
+// Project names match Maven artifact ids, so Gradle auto-substitutes — no dependencySubstitution.
+includeBuild(engineRoot)
 
 rootProject.name = "worldsmiths-example-basic"
 
